@@ -1,0 +1,31 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "server-enhanced.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "organizer-enhanced.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "server-enhanced.js"
+    },
+    {
+      "src": "/uploads/(.*)",
+      "dest": "uploads/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "organizer-enhanced.html"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "regions": ["sfo1"]
+}

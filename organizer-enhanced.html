@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task & Content Organizer Pro</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --light: #f9fafb;
+            --border: #e5e7eb;
+            --text: #111827;
+            --text-muted: #6b7280;
+            --bg-surface: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background: var(--bg-surface);
+            border-right: 1px solid var(--border);
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar h2 {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+
+        .nav-section {
+            margin-bottom: 25px;
+        }
+
+        .nav-section-title {
+            font-size: 0.85em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 10px;
+            padding-left: 12px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            margin-bottom: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text);
+        }
+
+        .nav-item:hover {
+            background: var(--light);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
+            border-left: 3px solid var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-item i {
+            width: 20px;
+        }
+
+        .main-content {
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .header {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-box, .filter-select {
+            padding: 10px 15px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1em;
+            background: var(--bg-surface);
+            color: var(--text);
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .item-card {
+            background: var(--bg-surface);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary);
+            position: relative;
+        }
+
+        .item-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .item-card.completed {
+            opacity: 0.7;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(16, 185, 129, 0.02) 100%);
+        }
+
+        .item-status-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: 600;
+            background: var(--success);
+            color: white;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+
+        .item-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--text);
+            flex: 1;
+            word-break: break-word;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .item-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            padding: 4px 6px;
+            transition: all 0.3s ease;
+        }
+
+        .item-actions button:hover {
+            color: var(--danger);
+            background: var(--light);
+        }
+
+        .item-description {
+            color: var(--text-muted);
+            font-size: 0.95em;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .item-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-size: 0.85em;
+            color: var(--text-muted);
+        }
+
+        .priority-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8em;
+        }
+
+        .priority-high {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+        }
+
+        .priority-medium {
+            background: rgba(245, 158, 11, 0.1);
+            color: #d97706;
+        }
+
+        .priority-low {
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+        }
+
+        .deadline-box {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(239, 68, 68, 0.1) 100%);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            color: var(--warning);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .deadline-box.overdue {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.1) 100%);
+            color: var(--danger);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--bg-surface);
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            margin: 20px 0;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .modal-buttons button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 3em;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .tag {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
+            color: var(--primary);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .filters {
+                flex-direction: column;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2><i class="fas fa-tasks"></i> Organizer</h2>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Views</div>
+                <div class="nav-item active" onclick="switchView('all')">
+                    <i class="fas fa-inbox"></i>
+                    <span>All Items</span>
+                </div>
+                <div class="nav-item" onclick="switchView('tasks')">
+                    <i class="fas fa-check-square"></i>
+                    <span>Tasks</span>
+                </div>
+                <div class="nav-item" onclick="switchView('overdue')">
+                    <i class="fas fa-bell"></i>
+                    <span>Overdue</span>
+                </div>
+                <div class="nav-item" onclick="switchView('priority-high')">
+                    <i class="fas fa-fire" style="color: #ef4444;"></i>
+                    <span>High Priority</span>
+                </div>
+                <div class="nav-item" onclick="switchView('completed')">
+                    <i class="fas fa-check-circle" style="color: #10b981;"></i>
+                    <span>Completed</span>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Other</div>
+                <div class="nav-item" onclick="openSettingsModal()">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1><i class="fas fa-tasks"></i> Task Organizer Pro</h1>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="openAddModal()">
+                        <i class="fas fa-plus"></i> Add Item
+                    </button>
+                </div>
+            </div>
+
+            <div class="filters">
+                <input type="text" id="searchInput" class="search-box" placeholder="🔍 Search items...">
+                <select id="typeFilter" class="filter-select">
+                    <option value="">All Types</option>
+                    <option value="tasks">Tasks</option>
+                    <option value="materials">Materials</option>
+                    <option value="ideas">Ideas</option>
+                    <option value="links">Links</option>
+                    <option value="data">Data</option>
+                </select>
+                <select id="priorityFilter" class="filter-select">
+                    <option value="">All Priorities</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                </select>
+            </div>
+
+            <div class="content-grid" id="contentGrid"></div>
+        </div>
+    </div>
+
+    <!-- Add Modal -->
+    <div class="modal" id="addModal">
+        <div class="modal-content">
+            <h2>Add New Item</h2>
+
+            <div class="error-message" id="errorMsg"></div>
+
+            <div class="form-group">
+                <label>Type *</label>
+                <select id="itemType">
+                    <option value="tasks">Task</option>
+                    <option value="materials">Material</option>
+                    <option value="ideas">Idea</option>
+                    <option value="links">Link</option>
+                    <option value="data">Data</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Title *</label>
+                <input type="text" id="itemTitle" placeholder="Enter title">
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="itemDescription" placeholder="Enter description..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Tags</label>
+                <input type="text" id="itemTags" placeholder="comma-separated tags">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Priority</label>
+                    <select id="itemPriority">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Deadline</label>
+                    <input type="datetime-local" id="itemDeadline">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="itemReminder" checked>
+                    Enable Reminders (1 day, 1 hour, 15 mins)
+                </label>
+            </div>
+
+            <div class="form-group" id="urlGroup" style="display: none;">
+                <label>URL</label>
+                <input type="url" id="itemUrl" placeholder="https://example.com">
+            </div>
+
+            <div class="form-group" id="fileGroup" style="display: none;">
+                <label>Attach File</label>
+                <input type="file" id="itemFile">
+            </div>
+
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="closeModal('addModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveItem()">Add Item</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <h2>⚙️ Settings & Notifications</h2>
+
+            <div style="background: var(--light); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <h3 style="margin-bottom: 10px; font-size: 1.1em;">WhatsApp Notifications</h3>
+                <p style="color: var(--text-muted); font-size: 0.9em; margin-bottom: 10px;">
+                    Get alerts on your phone before deadlines. Requires Twilio free account.
+                </p>
+
+                <div class="form-group">
+                    <label>WhatsApp Number</label>
+                    <input type="tel" id="whatsappNumber" placeholder="+1-234-567-8900 (include country code)">
+                </div>
+
+                <div class="form-group">
+                    <label>Twilio Auth Token</label>
+                    <input type="password" id="whatsappApiKey" placeholder="Your Twilio Auth Token">
+                </div>
+
+                <button class="btn btn-secondary" onclick="testNotification()">
+                    <i class="fas fa-paper-plane"></i> Send Test Message
+                </button>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="remindersEnabled" checked>
+                    Enable All Reminders
+                </label>
+            </div>
+
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="closeModal('settingsModal')">Close</button>
+                <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/api';
+        let allItems = [];
+        let currentView = 'all';
+
+        const itemTypes = {
+            tasks: { icon: 'fa-check-square', label: 'Task' },
+            materials: { icon: 'fa-folder', label: 'Material' },
+            ideas: { icon: 'fa-lightbulb', label: 'Idea' },
+            links: { icon: 'fa-link', label: 'Link' },
+            data: { icon: 'fa-database', label: 'Data' }
+        };
+
+        // Utility functions
+        function showError(msg) {
+            const errorDiv = document.getElementById('errorMsg');
+            errorDiv.textContent = msg;
+            errorDiv.classList.add('show');
+            setTimeout(() => errorDiv.classList.remove('show'), 5000);
+        }
+
+        async function loadItems() {
+            try {
+                console.log('Loading items...');
+                const response = await fetch(`${API_URL}/items`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Items loaded:', data);
+                
+                allItems = [];
+                Object.entries(data).forEach(([type, items]) => {
+                    if (Array.isArray(items)) {
+                        allItems.push(...items.map(item => ({ ...item, type })));
+                    }
+                });
+
+                renderItems();
+            } catch (err) {
+                console.error('Load error:', err);
+                showError('Failed to load items: ' + err.message);
+            }
+        }
+
+        function getDeadlineStatus(deadline) {
+            if (!deadline) return null;
+            
+            const now = new Date();
+            const due = new Date(deadline);
+            const diffMs = due - now;
+            const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+            const diffHours = Math.ceil(diffMs / (1000 * 60 * 60));
+            
+            return {
+                isOverdue: diffMs < 0,
+                daysLeft: diffDays,
+                hoursLeft: diffHours,
+                text: diffMs < 0 ? 
+                    'OVERDUE' : 
+                    (diffDays > 0 ? `${diffDays} day${diffDays === 1 ? '' : 's'} left` : `${diffHours} hour${diffHours === 1 ? '' : 's'} left`)
+            };
+        }
+
+        function renderItems() {
+            let filtered = [...allItems].filter(i => i.status !== 'archived');
+
+            // Apply view filter
+            if (currentView === 'tasks') {
+                filtered = filtered.filter(i => i.type === 'tasks');
+            } else if (currentView === 'overdue') {
+                filtered = filtered.filter(i => {
+                    const status = getDeadlineStatus(i.deadline);
+                    return status && status.isOverdue;
+                });
+            } else if (currentView === 'priority-high') {
+                filtered = filtered.filter(i => i.priority === 'high');
+            } else if (currentView === 'completed') {
+                filtered = filtered.filter(i => i.status === 'completed');
+            }
+
+            // Apply text filters
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            const typeFilter = document.getElementById('typeFilter').value;
+            const priorityFilter = document.getElementById('priorityFilter').value;
+
+            if (searchQuery) {
+                filtered = filtered.filter(i =>
+                    i.title.toLowerCase().includes(searchQuery) ||
+                    (i.description && i.description.toLowerCase().includes(searchQuery))
+                );
+            }
+
+            if (typeFilter) {
+                filtered = filtered.filter(i => i.type === typeFilter);
+            }
+
+            if (priorityFilter) {
+                filtered = filtered.filter(i => i.priority === priorityFilter);
+            }
+
+            // Sort by priority and deadline
+            filtered.sort((a, b) => {
+                const priorityOrder = { high: 0, medium: 1, low: 2 };
+                const aPriority = priorityOrder[a.priority] || 2;
+                const bPriority = priorityOrder[b.priority] || 2;
+                
+                if (aPriority !== bPriority) return aPriority - bPriority;
+                
+                if (a.deadline && b.deadline) {
+                    return new Date(a.deadline) - new Date(b.deadline);
+                }
+                
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
+
+            const contentGrid = document.getElementById('contentGrid');
+            if (filtered.length === 0) {
+                contentGrid.innerHTML = `
+                    <div style="grid-column: 1 / -1;">
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>No items found</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            contentGrid.innerHTML = filtered.map(item => {
+                const deadlineStatus = getDeadlineStatus(item.deadline);
+                const isOverdue = deadlineStatus && deadlineStatus.isOverdue;
+
+                return `
+                    <div class="item-card ${item.status === 'completed' ? 'completed' : ''}">
+                        ${item.status === 'completed' ? '<div class="item-status-badge">✓ Done</div>' : ''}
+
+                        <div class="item-header">
+                            <div class="item-title">${escapeHtml(item.title)}</div>
+                            <div class="item-actions">
+                                <button onclick="toggleComplete('${item.type}', '${item.id}')" title="Mark Done">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button onclick="deleteItem('${item.type}', '${item.id}')" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        ${item.description ? `<div class="item-description">${escapeHtml(item.description)}</div>` : ''}
+
+                        <div class="item-meta">
+                            <span><i class="fas ${itemTypes[item.type].icon}"></i> ${itemTypes[item.type].label}</span>
+                            <span class="priority-badge priority-${item.priority}">${item.priority.toUpperCase()}</span>
+                        </div>
+
+                        ${item.tags && item.tags.length > 0 ? `
+                            <div>
+                                ${item.tags.map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}
+                            </div>
+                        ` : ''}
+
+                        ${item.deadline && deadlineStatus ? `
+                            <div class="deadline-box ${isOverdue ? 'overdue' : ''}">
+                                <i class="fas fa-calendar"></i>
+                                ${deadlineStatus.text}
+                            </div>
+                        ` : ''}
+
+                        ${item.fileName ? `
+                            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 0.9em;">
+                                <a href="${escapeHtml(item.filePath)}" target="_blank" style="color: var(--primary); text-decoration: none;">
+                                    <i class="fas fa-download"></i> ${escapeHtml(item.fileName)}
+                                </a>
+                            </div>
+                        ` : ''}
+
+                        ${item.url ? `
+                            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 0.9em;">
+                                <a href="${escapeHtml(item.url)}" target="_blank" style="color: var(--primary); text-decoration: none;">
+                                    <i class="fas fa-link"></i> Visit Link
+                                </a>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openAddModal() {
+            document.getElementById('addModal').classList.add('active');
+            updateTypeFields();
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.getElementById('errorMsg').classList.remove('show');
+        }
+
+        function updateTypeFields() {
+            const type = document.getElementById('itemType').value;
+            document.getElementById('urlGroup').style.display = type === 'links' ? 'block' : 'none';
+            document.getElementById('fileGroup').style.display = type === 'data' ? 'block' : 'none';
+        }
+
+        async function saveItem() {
+            const type = document.getElementById('itemType').value;
+            const title = document.getElementById('itemTitle').value.trim();
+            const description = document.getElementById('itemDescription').value.trim();
+            const tags = document.getElementById('itemTags').value.trim();
+            const priority = document.getElementById('itemPriority').value;
+            const deadline = document.getElementById('itemDeadline').value;
+            const reminderEnabled = document.getElementById('itemReminder').checked;
+            const url = document.getElementById('itemUrl').value.trim();
+            const fileInput = document.getElementById('itemFile');
+
+            if (!title) {
+                showError('Please enter a title');
+                return;
+            }
+
+            try {
+                console.log('Saving item:', { type, title, deadline });
+
+                if (type === 'data' && fileInput.files.length > 0) {
+                    const formData = new FormData();
+                    formData.append('type', type);
+                    formData.append('title', title);
+                    formData.append('description', description);
+                    formData.append('tags', tags);
+                    formData.append('priority', priority);
+                    formData.append('deadline', deadline);
+                    formData.append('reminderEnabled', reminderEnabled);
+                    formData.append('file', fileInput.files[0]);
+
+                    const response = await fetch(`${API_URL}/items/upload`, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (!response.ok) throw new Error('Upload failed');
+                } else {
+                    const response = await fetch(`${API_URL}/items`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            type,
+                            title,
+                            description,
+                            tags,
+                            priority,
+                            deadline,
+                            reminderEnabled,
+                            url: type === 'links' ? url : null
+                        })
+                    });
+
+                    if (!response.ok) throw new Error('Save failed');
+                }
+
+                loadItems();
+                closeModal('addModal');
+                document.getElementById('itemTitle').value = '';
+                document.getElementById('itemDescription').value = '';
+                document.getElementById('itemTags').value = '';
+                document.getElementById('itemDeadline').value = '';
+                document.getElementById('itemUrl').value = '';
+                document.getElementById('itemFile').value = '';
+
+            } catch (err) {
+                console.error('Save error:', err);
+                showError('Error saving item: ' + err.message);
+            }
+        }
+
+        async function toggleComplete(type, id) {
+            try {
+                await fetch(`${API_URL}/items/${type}/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: 'completed' })
+                });
+                loadItems();
+            } catch (err) {
+                showError('Error updating item');
+            }
+        }
+
+        async function deleteItem(type, id) {
+            if (!confirm('Delete this item?')) return;
+
+            try {
+                await fetch(`${API_URL}/items/${type}/${id}`, { method: 'DELETE' });
+                loadItems();
+            } catch (err) {
+                showError('Error deleting item');
+            }
+        }
+
+        function switchView(view) {
+            currentView = view;
+            renderItems();
+        }
+
+        function openSettingsModal() {
+            document.getElementById('settingsModal').classList.add('active');
+            loadSettings();
+        }
+
+        async function loadSettings() {
+            try {
+                const response = await fetch(`${API_URL}/settings`);
+                if (response.ok) {
+                    const settings = await response.json();
+                    document.getElementById('whatsappNumber').value = settings.whatsappNumber || '';
+                    document.getElementById('whatsappApiKey').value = settings.whatsappApiKey || '';
+                    document.getElementById('remindersEnabled').checked = settings.remindersEnabled !== false;
+                }
+            } catch (err) {
+                console.error('Load settings error:', err);
+            }
+        }
+
+        async function saveSettings() {
+            try {
+                await fetch(`${API_URL}/settings`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        whatsappNumber: document.getElementById('whatsappNumber').value,
+                        whatsappApiKey: document.getElementById('whatsappApiKey').value,
+                        remindersEnabled: document.getElementById('remindersEnabled').checked
+                    })
+                });
+                alert('Settings saved!');
+                closeModal('settingsModal');
+            } catch (err) {
+                showError('Error saving settings');
+            }
+        }
+
+        async function testNotification() {
+            const message = '✅ Test notification from Task Organizer!';
+            const phoneNumber = document.getElementById('whatsappNumber').value;
+
+            if (!phoneNumber) {
+                alert('Please enter WhatsApp number first');
+                return;
+            }
+
+            try {
+                await fetch(`${API_URL}/test-notification`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message, phoneNumber })
+                });
+                alert('Test message sent! Check your WhatsApp.');
+            } catch (err) {
+                showError('Error sending test');
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', renderItems);
+        document.getElementById('typeFilter').addEventListener('change', renderItems);
+        document.getElementById('priorityFilter').addEventListener('change', renderItems);
+        document.getElementById('itemType').addEventListener('change', updateTypeFields);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('App loaded, fetching items...');
+            loadItems();
+        });
+    </script>
+</body>
+</html>
