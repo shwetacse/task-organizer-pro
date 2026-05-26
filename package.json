@@ -1,28 +1,20 @@
+
 {
-  "name": "task-organizer",
+  "name": "task-organizer-pro",
   "version": "1.0.0",
-  "description": "A comprehensive task and content organizer application",
+  "description": "Task organizer with smart reminders and deadlines",
   "main": "server-enhanced.js",
   "scripts": {
-    "start": "node server-enhanced.js",
-    "dev": "nodemon server-enhanced.js"
+    "start": "node server-enhanced.js"
   },
-  "keywords": [
-    "task",
-    "organizer",
-    "productivity",
-    "notes"
-  ],
-  "author": "",
-  "license": "MIT",
   "dependencies": {
     "express": "^4.18.2",
     "cors": "^2.8.5",
-    ""multer": "^1.4.5",
+    "multer": "^1.4.5",
     "node-cron": "^3.0.2",
     "axios": "^1.6.2"
   },
-  "devDependencies": {
-    "nodemon": "^3.0.1"
+  "engines": {
+    "node": "18.x"
   }
 }
